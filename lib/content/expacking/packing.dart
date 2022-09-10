@@ -298,7 +298,8 @@ class SPackingState extends State<Packing> {
                   primary: Colors.blue,
                 ),
                 onPressed: () {
-                  print("sompong1");
+                  //print("sompong1");
+                  print("2x");
                 },
                 child: Text(
                   'Next Step',
