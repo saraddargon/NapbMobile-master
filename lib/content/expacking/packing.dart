@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+//import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:barcodeapp/content/mainpage.dart';
 import 'package:barcodeapp/global.dart';
 import 'package:barcodeapp/model/sqlmanament.dart';
@@ -350,8 +351,9 @@ class SPackingState extends State<Packing> {
     if (dbs.checkNo != "" && dbs.checkNo != "Error") {
       if (value == 'SCANQR') {
         value = await FlutterBarcodeScanner.scanBarcode(
-            "#ff6666", "Cancel", true, ScanMode.QR);
+            "#ff6666", "Cancel", false, ScanMode.DEFAULT);
       }
+      print("barcode Scan :" + value);
       Future.delayed(Duration(milliseconds: 1000), () {
         // Do something
       });
