@@ -353,16 +353,12 @@ class SPackingState extends State<Packing> {
         value = await FlutterBarcodeScanner.scanBarcode(
             "#ff6666", "Cancel", false, ScanMode.DEFAULT);
       }
-      print("barcode Scan :" + value);
+      // print("barcode Scan :" + value);
       Future.delayed(Duration(milliseconds: 1000), () {
         // Do something
       });
 
-      // if (_value == 'SCANQR') {
-      //   _value = '';
-      // }
-      // print(_value);
-
+      await _clearData();
       if (value != '-1') {
         setState(() {
           barcode = value;
@@ -370,12 +366,12 @@ class SPackingState extends State<Packing> {
           statusErr = false;
         });
         barcode = value;
-        await _clearData();
+
         Future.delayed(Duration(milliseconds: 500), () {
           // Do something
         });
 
-        //  await _fetchJobs(_value);
+        await _fetchJobs(value);
 
         ///////end//////////
       } else {
@@ -389,7 +385,7 @@ class SPackingState extends State<Packing> {
     } else {
       setState(() {
         statusErr = true;
-        sStatus = "Error Check No Empty!!";
+        sStatus = "Error List No Empty!!";
       });
     }
   }
