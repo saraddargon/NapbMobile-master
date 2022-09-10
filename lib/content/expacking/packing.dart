@@ -298,11 +298,7 @@ class SPackingState extends State<Packing> {
                   primary: Colors.blue,
                 ),
                 onPressed: () {
-<<<<<<< HEAD
                   print("sompong1");
-=======
-                  print("sompong");
->>>>>>> 4f9635db684d59c4003dd4e5c1b40f4095b0cb77
                 },
                 child: Text(
                   'Next Step',
@@ -371,16 +367,7 @@ class SPackingState extends State<Packing> {
           statusErr = false;
         });
         barcode = value;
-<<<<<<< HEAD
-        ////Start////////
-
         await _clearData();
-=======
-
-        ////Start////////
-
-        //  await _clearData();
->>>>>>> 4f9635db684d59c4003dd4e5c1b40f4095b0cb77
         Future.delayed(Duration(milliseconds: 500), () {
           // Do something
         });
@@ -414,11 +401,7 @@ class SPackingState extends State<Packing> {
       statusErr = false;
       getDataDisplay("SCANQR");
     } else if (index == 2) {
-<<<<<<< HEAD
-      // _clearData();
-=======
       _clearData();
->>>>>>> 4f9635db684d59c4003dd4e5c1b40f4095b0cb77
     } else if (index == 0) {
       //  createJobPost();
       _showMyDialogBackHome("");
