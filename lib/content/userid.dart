@@ -4,8 +4,6 @@ import 'package:barcodeapp/global.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 
-import 'homepage.dart';
-
 class UserID extends StatefulWidget {
   UserID({Key? key}) : super(key: key);
 

@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:convert';
 //import 'package:barcode_scan2/barcode_scan2.dart';
+import 'package:barcodeapp/content/expacking/PackingScanPD.dart';
 import 'package:barcodeapp/content/mainpage.dart';
 import 'package:barcodeapp/global.dart';
 import 'package:barcodeapp/model/sqlmanament.dart';
@@ -11,114 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
-class Job {
-  final String assetCode;
-  final String assetName;
-  final String thaiName;
-  final String purchaseDate;
-  final String assetLocation;
-  final int inputQty;
-  final String aUse;
-  final String aNotUse;
-  final String aDamage;
-  final String aTransfer;
-  final String aLoss;
-  final String lOK;
-  final String lNO;
-  final String lNotStick;
-  final String remark;
-  final String dept;
-  final String checkby;
-  final int qtyNew;
-
-  Job(
-      {required this.assetCode,
-      required this.assetName,
-      required this.thaiName,
-      required this.purchaseDate,
-      required this.assetLocation,
-      required this.inputQty,
-      required this.aUse,
-      required this.aNotUse,
-      required this.aDamage,
-      required this.aTransfer,
-      required this.aLoss,
-      required this.lOK,
-      required this.lNO,
-      required this.lNotStick,
-      required this.remark,
-      required this.dept,
-      required this.checkby,
-      required this.qtyNew});
-
-  factory Job.fromJson(Map<String, dynamic> json) {
-    return Job(
-      assetCode: json['AssetCode'],
-      assetName: json['AssetName'],
-      thaiName: json['ThaiName'],
-      purchaseDate: json['PurchaseDate'],
-      assetLocation: json['AssetLocation'],
-      inputQty: json['InputQty'],
-      aUse: json['AUse'],
-      aNotUse: json['ANotUse'],
-      aDamage: json['ADamage'],
-      aTransfer: json['ATransfer'],
-      aLoss: json['ALoss'],
-      lOK: json['LOK'],
-      lNO: json['LNO'],
-      lNotStick: json['LNotStick'],
-      remark: json['Remark'],
-      dept: json['Dept'],
-      checkby: json['CheckBy'],
-      qtyNew: json['QtyNew'],
-    );
-  }
-}
-
-class JobPost {
-  final String pcheckNo;
-  final String passetCode;
-  final int pinputQty;
-  final String paUse;
-  final String paNotUse;
-  final String paDamage;
-  final String paTransfer;
-  final String paLoss;
-  final String plOK;
-  final String plNO;
-  final String plNotStick;
-  final String premark;
-
-  JobPost(
-      {required this.pcheckNo,
-      required this.passetCode,
-      required this.pinputQty,
-      required this.paUse,
-      required this.paNotUse,
-      required this.paDamage,
-      required this.paTransfer,
-      required this.paLoss,
-      required this.plOK,
-      required this.plNO,
-      required this.plNotStick,
-      required this.premark});
-  factory JobPost.fromJson(Map<String, dynamic> json) {
-    return JobPost(
-      pcheckNo: json['CheckNo'],
-      passetCode: json['AssetCode'],
-      pinputQty: json['InputQty'],
-      paUse: json['AUse'],
-      paNotUse: json['ANotUse'],
-      paDamage: json['ADamage'],
-      paTransfer: json['ATransfer'],
-      paLoss: json['ALoss'],
-      plOK: json['LOK'],
-      plNO: json['LNO'],
-      plNotStick: json['LNotStick'],
-      premark: json['Remark'],
-    );
-  }
-}
+import 'package:barcodeapp/model/PackingModel.dart';
 
 // ignore: must_be_immutable
 class Packing extends StatefulWidget {
@@ -294,22 +188,59 @@ class SPackingState extends State<Packing> {
                 ),
               ),
               SizedBox(height: 20.00),
+              TextField(
+                controller: TextEditingController(text: iQty.toString()),
+                maxLines: null,
+                readOnly: true,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                ),
+                decoration: InputDecoration(
+                  //fillColor: Colors.green.shade50,
+                  border: UnderlineInputBorder(),
+                  filled: true,
+                  enabled: true,
+                  icon: Icon(
+                    Icons.description,
+                    color: Color(0xff5ac18e),
+                    size: 30.0,
+                  ),
+                  labelText: 'Quantity :',
+                ),
+              ),
+              SizedBox(height: 50.00),
               TextButton(
                 style: TextButton.styleFrom(
                   primary: Colors.blue,
                 ),
                 onPressed: () {
                   //print("sompong1");
-                  print("2x");
+                  if (barcode != '') {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PackingScanPD(),
+                        ));
+                  }
                 },
                 child: Text(
                   'Next Step',
                   style: TextStyle(
-                    fontSize: 20,
+                    fontSize: 30,
                   ),
                 ),
               ),
               //Step Test
+              //  TextField(
+              //     controller: TextEditingController(text: dbs.exid()),
+              //     decoration: InputDecoration(
+              //       border: OutlineInputBorder(),
+              //       labelText: 'Export (id)',
+              //       isDense: true, // Added this
+              //       enabled: false,
+              //       contentPadding: EdgeInsets.all(8), // Added this
+              //     )),
 
               //End Test
             ],
@@ -449,53 +380,58 @@ class SPackingState extends State<Packing> {
     if (dbs.checkNo != '' && _value != '') {
       dbs.checkwifi();
       // dbs.wifis = 'No';
+      //  String ListID = "";
       if (dbs.wifis == "Yes") {
-        final jobsListAPIUrl =
-            dbs.url + 'api/CheckNoAd/' + dbs.checkNo + ',' + _value;
+        final jobsListAPIUrl = dbs.url + 'Export/ListTAG/' + _value;
+        // print(jobsListAPIUrl);
         final response = await http.get(Uri.parse(jobsListAPIUrl));
 
         if (response.statusCode == 200) {
           List jsonResponse = json.decode(response.body);
-          List<Job> jsb =
-              jsonResponse.map((job) => new Job.fromJson(job)).toList();
+          List<ExportListID1> jsb = jsonResponse
+              .map((job) => new ExportListID1.fromJson(job))
+              .toList();
           jsb.forEach((element) {
-            barcode = element.assetCode;
-            aName = element.assetName;
-            dName = element.dept;
-            tName = element.thaiName;
-            aName = aName + '\n' + tName;
-            aDate = element.purchaseDate;
-            iQty = element.inputQty;
-            qtyNew = element.qtyNew;
-            aUse = false;
-            aNotUse = false;
-            aDamage = false;
-            aLoss = false;
-            aTransfer = false;
-            lOK = false;
-            lNO = false;
-            lstricker = false;
-            remark = element.remark;
-            aUse = element.aUse == 'P' ? true : false;
-            aNotUse = element.aNotUse == 'P' ? true : false;
-            aDamage = element.aDamage == 'P' ? true : false;
-            aTransfer = element.aTransfer == 'P' ? true : false;
-            aLoss = element.aLoss == 'P' ? true : false;
-            lOK = element.lOK == 'P' ? true : false;
-            lNO = element.lNO == 'P' ? true : false;
-            lstricker = element.lNotStick == 'P' ? true : false;
+            //aName = element.pGroupPDA1;
+            // iQty = element.pQty;
+            setState(() {
+              statusErr = false;
+              sStatus = "Checked already!";
+              barcode = _value;
+              aName = element.pGroupPDA1;
+              iQty = element.pQty;
+              dbs.pexid = element.pid.toString();
+            });
+            // qtyNew = element.qtyNew;
+            // aUse = false;
+            // aNotUse = false;
+            // aDamage = false;
+            // aLoss = false;
+            // aTransfer = false;
+            // lOK = false;
+            // lNO = false;
+            // lstricker = false;
+            // remark = element.remark;
+            // aUse = element.aUse == 'P' ? true : false;
+            // aNotUse = element.aNotUse == 'P' ? true : false;
+            // aDamage = element.aDamage == 'P' ? true : false;
+            // aTransfer = element.aTransfer == 'P' ? true : false;
+            // aLoss = element.aLoss == 'P' ? true : false;
+            // lOK = element.lOK == 'P' ? true : false;
+            // lNO = element.lNO == 'P' ? true : false;
+            // lstricker = element.lNotStick == 'P' ? true : false;
 
-            if (element.checkby == '') {
-              setState(() {
-                aUse = true;
-                lOK = true;
-              });
-            } else {
-              setState(() {
-                statusErr = false;
-                sStatus = "Checked already!";
-              });
-            }
+            // if (element.checkby == '') {
+            //   setState(() {
+            //     aUse = true;
+            //     lOK = true;
+            //   });
+            // } else {
+            //   setState(() {
+            //     statusErr = false;
+            //     sStatus = "Checked already!";
+            //   });
+            // }
           });
           if (jsb.isEmpty) {
             _showMyDialogErr(_value);
@@ -508,59 +444,59 @@ class SPackingState extends State<Packing> {
           });
         }
       } else {
-        //offline//
-        List<SfxAsset> sq = await sqm.getTemp2Item(dbs.checkNo, _value);
-        // print('test wifi => ' + sq.length.toString());
-        if (sq.length > 0) {
-          sq.forEach((element) {
-            barcode = element.assetCode;
-            aName = element.assetName;
-            dName = element.dept;
-            tName = element.thaiName;
-            aName = aName + '\n' + tName;
-            aDate = element.checkDate;
-            iQty = element.inputQty;
-            qtyNew = element.qtyNew;
-            aUse = false;
-            aNotUse = false;
-            aDamage = false;
-            aLoss = false;
-            aTransfer = false;
-            lOK = false;
-            lNO = false;
-            lstricker = false;
-            remark = element.remark;
-            aUse = element.aUse == 'P' ? true : false;
-            aNotUse = element.aNotUse == 'P' ? true : false;
-            aDamage = element.aDamage == 'P' ? true : false;
-            aTransfer = element.aTransfer == 'P' ? true : false;
-            aLoss = element.aLoss == 'P' ? true : false;
-            lOK = element.lOK == 'P' ? true : false;
-            lNO = element.lNO == 'P' ? true : false;
-            lstricker = element.lNotStick == 'P' ? true : false;
+        // //offline//
+        // List<SfxAsset> sq = await sqm.getTemp2Item(dbs.checkNo, _value);
+        // // print('test wifi => ' + sq.length.toString());
+        // if (sq.length > 0) {
+        //   sq.forEach((element) {
+        //     barcode = element.assetCode;
+        //     aName = element.assetName;
+        //     dName = element.dept;
+        //     tName = element.thaiName;
+        //     aName = aName + '\n' + tName;
+        //     aDate = element.checkDate;
+        //     iQty = element.inputQty;
+        //     qtyNew = element.qtyNew;
+        //     aUse = false;
+        //     aNotUse = false;
+        //     aDamage = false;
+        //     aLoss = false;
+        //     aTransfer = false;
+        //     lOK = false;
+        //     lNO = false;
+        //     lstricker = false;
+        //     remark = element.remark;
+        //     aUse = element.aUse == 'P' ? true : false;
+        //     aNotUse = element.aNotUse == 'P' ? true : false;
+        //     aDamage = element.aDamage == 'P' ? true : false;
+        //     aTransfer = element.aTransfer == 'P' ? true : false;
+        //     aLoss = element.aLoss == 'P' ? true : false;
+        //     lOK = element.lOK == 'P' ? true : false;
+        //     lNO = element.lNO == 'P' ? true : false;
+        //     lstricker = element.lNotStick == 'P' ? true : false;
 
-            if (element.checkPoint == '') {
-              setState(() {
-                aUse = true;
-                lOK = true;
-              });
-            } else {
-              setState(() {
-                statusErr = false;
-                sStatus = "Checked already!";
-              });
-            }
-          });
-          if (sq.isEmpty) {
-            _showMyDialogErr(_value);
-          }
-        } else {
-          //throw Exception('Failed to load Data from API');
-          setState(() {
-            statusErr = true;
-            sStatus = "Error Check No or Asset Code Empty!!";
-          });
-        }
+        //     if (element.checkPoint == '') {
+        //       setState(() {
+        //         aUse = true;
+        //         lOK = true;
+        //       });
+        //     } else {
+        //       setState(() {
+        //         statusErr = false;
+        //         sStatus = "Checked already!";
+        //       });
+        //     }
+        //   });
+        //   if (sq.isEmpty) {
+        //     _showMyDialogErr(_value);
+        //   }
+        // } else {
+        //   //throw Exception('Failed to load Data from API');
+        //   setState(() {
+        //     statusErr = true;
+        //     sStatus = "Error Check No or Asset Code Empty!!";
+        //   });
+        // }
       }
     }
   }

@@ -57,6 +57,16 @@ class DBData {
   set checkNo(String checkNo) {
     _checkNo = checkNo;
   }
+
+  ////////////////////////////CheckNo
+  static String _exid = "";
+
+  // ignore: unnecessary_getters_setters
+  String exid() => _exid;
+  // ignore: unnecessary_getters_setters
+  set pexid(String exid) {
+    _exid = exid;
+  }
   /////////////////////////AssetCode
 
   static String _assetCode = "";
@@ -75,12 +85,12 @@ class DBData {
   }
 
   ///////////////////Url CheckNo
-  static String _url = "http://10.66.22.34:8090/";
+  static String _url = "http://192.168.1.14/webnaptApi/api/";
   //static String _url = "http://1.179.133.222:8090/";
   //"http://10.0.2.2:8090/";
   String get url => _url;
   //////////////////Url ...
-  static String _urlCheckNo = "http://10.66.22.34:8090/api/CheckNo/";
+  static String _urlCheckNo = "http://192.168.1.14/webnaptApi/api/";
   //static String _urlCheckNo = "http://1.179.133.222:8090/api/CheckNo/";
   //"http://10.0.2.2:8090/api/checkNo/";
   String get urlCheckNo => _urlCheckNo;
