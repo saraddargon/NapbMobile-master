@@ -25,6 +25,15 @@ class Packing extends StatefulWidget {
 }
 
 class SPackingState extends State<Packing> {
+  final ButtonStyle style = ElevatedButton.styleFrom(
+    textStyle: const TextStyle(fontSize: 20),
+    elevation: 5.0,
+    foregroundColor: Colors.white,
+    padding: EdgeInsets.all(20),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+    ),
+  );
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Sqlmanagement sqm = Sqlmanagement();
   DBData dbs = DBData();
@@ -340,7 +349,7 @@ class SPackingState extends State<Packing> {
 
   void showInSnackBar(String value) {
     // ignore: deprecated_member_use
-    _scaffoldKey.currentState?.showSnackBar(snackBar);
+    //_scaffoldKey.currentState?.showSnackBar(snackBar);
   }
 
   void setValueAsstCode1(String value) {
@@ -614,7 +623,8 @@ class SPackingState extends State<Packing> {
           // then parse the JSON.
           //showInSnackBar("");
           // ignore: deprecated_member_use
-          _scaffoldKey.currentState?.showSnackBar(snackBarBack);
+          //  _scaffoldKey.currentState?.showSnackBar(snackBarBack);
+          //  ScaffoldMessenger.of(context).showSnackBar(snackBarBack);
           // return JobPost.fromJson(jsonDecode(response.body));
         } else {
           // If the server did not return a 201 CREATED response,

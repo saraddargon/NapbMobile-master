@@ -14,6 +14,15 @@ class UserID extends StatefulWidget {
 class SuserIDState extends State<UserID> {
   DBData db = DBData();
   @override
+  final ButtonStyle style = ElevatedButton.styleFrom(
+    textStyle: const TextStyle(fontSize: 20),
+    elevation: 5.0,
+    foregroundColor: Colors.white,
+    padding: EdgeInsets.all(20),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+    ),
+  );
   final TextEditingController _checkNo = TextEditingController();
   final TextEditingController _user = TextEditingController();
   Widget build(BuildContext context) {
@@ -84,8 +93,9 @@ class SuserIDState extends State<UserID> {
           width: double.infinity,
           // height: 80,
           // ignore: deprecated_member_use
-          child: RaisedButton(
-            elevation: 5,
+          child: ElevatedButton(
+            // elevation: 5,
+
             onPressed: () {
               if (_checkNo.text != '') {
                 //Codeing
@@ -99,11 +109,7 @@ class SuserIDState extends State<UserID> {
                     ));
               }
             },
-            padding: EdgeInsets.all(20),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            color: Colors.blueGrey,
+            style: style,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const <Widget>[

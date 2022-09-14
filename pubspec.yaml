@@ -43,6 +43,7 @@ dependencies:
   sqflite: ^2.0.2+1
   intl: ^0.17.0
   provider: ^6.0.3
+  syncfusion_flutter_datagrid: ^20.2.49
 
 
 dev_dependencies:

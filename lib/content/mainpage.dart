@@ -412,7 +412,7 @@ class SMainPageState extends State<MainPage> {
         content: Text("Please.. $_value1 on Server!"),
         actions: <Widget>[
           // ignore: deprecated_member_use
-          FlatButton(
+          ElevatedButton(
             child: Text('Close'),
             onPressed: () {
               Navigator.of(context).pop();
@@ -441,7 +441,7 @@ class SMainPageState extends State<MainPage> {
         ),
         actions: <Widget>[
           // ignore: deprecated_member_use
-          FlatButton(
+          ElevatedButton(
             child: Text('Close'),
             onPressed: () {
               Navigator.of(context).pop();

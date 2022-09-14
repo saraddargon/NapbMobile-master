@@ -12,6 +12,15 @@ class Buildbutton01 extends StatefulWidget {
 
 class _Buildbutton01State extends State<Buildbutton01> {
   DBData db = DBData();
+  final ButtonStyle style = ElevatedButton.styleFrom(
+    textStyle: const TextStyle(fontSize: 20),
+    elevation: 5.0,
+    foregroundColor: Colors.white,
+    padding: EdgeInsets.all(20),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -20,8 +29,9 @@ class _Buildbutton01State extends State<Buildbutton01> {
       width: double.infinity,
       // height: 80,
       // ignore: deprecated_member_use
-      child: RaisedButton(
-        elevation: 5,
+      child: ElevatedButton(
+        //elevation: 5,
+        style: style,
         onPressed: () {
           db.selectchioce = 1;
           Navigator.push(
@@ -30,11 +40,7 @@ class _Buildbutton01State extends State<Buildbutton01> {
                 builder: (context) => Packing(),
               ));
         },
-        padding: const EdgeInsets.all(20),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        color: const Color.fromARGB(255, 7, 55, 78),
+
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const <Widget>[

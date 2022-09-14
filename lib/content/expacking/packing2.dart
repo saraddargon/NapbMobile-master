@@ -767,7 +767,7 @@ class SPacking2State extends State<Packing2> {
 
   void showInSnackBar(String value) {
     // ignore: deprecated_member_use
-    _scaffoldKey.currentState?.showSnackBar(snackBar);
+    // _scaffoldKey.currentState?.showSnackBar(snackBar);
   }
 
   void setValueAsstCode1(String value) {
@@ -1036,7 +1036,7 @@ class SPacking2State extends State<Packing2> {
           // then parse the JSON.
           //showInSnackBar("");
           // ignore: deprecated_member_use
-          _scaffoldKey.currentState?.showSnackBar(snackBarBack);
+          // _scaffoldKey.currentState?.showSnackBar(snackBarBack);
           // return JobPost.fromJson(jsonDecode(response.body));
         } else {
           // If the server did not return a 201 CREATED response,

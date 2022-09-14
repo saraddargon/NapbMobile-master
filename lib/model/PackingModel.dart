@@ -77,17 +77,31 @@ class ExportScanPost {
   final String pTAG;
   final String cTAG;
   final String pStatus;
+  final int pid;
+  final String sUser;
 
-  ExportScanPost({
-    required this.pTAG,
-    required this.cTAG,
-    required this.pStatus,
-  });
+  ExportScanPost(
+      {required this.pTAG,
+      required this.cTAG,
+      required this.pStatus,
+      required this.pid,
+      required this.sUser});
   factory ExportScanPost.fromJson(Map<String, dynamic> json) {
     return ExportScanPost(
-      pTAG: json['pTAG'],
-      cTAG: json['cTAG'],
-      pStatus: json['pStatus'],
-    );
+        pTAG: json['pTAG'],
+        cTAG: json['cTAG'],
+        pStatus: json['pStatus'],
+        pid: json['pid'],
+        sUser: json['sUser']);
+  }
+}
+
+class JException {
+  final String mMess;
+  JException({
+    required this.mMess,
+  });
+  factory JException.fromJson(Map<String, dynamic> json) {
+    return JException(mMess: json['Message']);
   }
 }

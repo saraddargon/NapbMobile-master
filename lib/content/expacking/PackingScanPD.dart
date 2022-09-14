@@ -1,7 +1,7 @@
-// ignore_for_file: prefer_interpolation_to_compose_strings, prefer_const_constructors
-
+// ignore_for_file: prefer_interpolation_to_compose_strings, prefer_const_constructors, unnecessary_string_interpolations
 import 'dart:async';
 import 'dart:convert';
+import 'package:barcodeapp/content/expacking/PackingList.dart';
 import 'package:barcodeapp/content/expacking/packing.dart';
 import 'package:barcodeapp/global.dart';
 import 'package:barcodeapp/model/sqlmanament.dart';
@@ -71,6 +71,7 @@ class PackingScanPDtate extends State<PackingScanPD> {
     backgroundColor: Colors.orange,
   );
   String remark = "";
+  String PartNo = "";
   final formatter = NumberFormat("###,###");
   int iQty = 0;
   int uQty = 0;
@@ -121,7 +122,7 @@ class PackingScanPDtate extends State<PackingScanPD> {
             ),
             onPressed: () {
               if (barcode != '') {
-                _showMyDialogClear(barcode);
+                //_showMyDialogClear(barcode);
               }
             },
           )
@@ -155,8 +156,22 @@ class PackingScanPDtate extends State<PackingScanPD> {
                     ),
                     Text('         Quantity :  '),
                     Text(
-                      uQty.toString() + " / " + iQty.toString(),
-                      style: TextStyle(color: Colors.blue),
+                      iQty.toString(),
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 15.00),
+                Row(
+                  children: <Widget>[
+                    Text('Part No : '),
+                    Text(
+                      PartNo,
+                      style: TextStyle(color: Colors.blue.shade900),
                     ),
                   ],
                 ),
@@ -168,7 +183,7 @@ class PackingScanPDtate extends State<PackingScanPD> {
                         primary: Colors.blue,
                       ),
                       onPressed: () {
-                        print("sompong1");
+                        // print("sompong1");
                       },
                       child: Text(
                         'Print',
@@ -207,21 +222,26 @@ class PackingScanPDtate extends State<PackingScanPD> {
                 Text('Scan TAG (PD) : '),
                 SizedBox(height: 5.0),
                 TextField(
-                    controller: TextEditingController(text: ScanTAG),
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      // labelText: 'Production TAG Scan...',
-                      isDense: true, // Added this
-                      enabled: false,
-                      filled: true,
-                      fillColor: Colors.yellow.shade200,
-                      contentPadding: EdgeInsets.all(8), // Added this
-                    )),
+                  controller: TextEditingController(text: ScanTAG),
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    // labelText: 'Production TAG Scan...',
+                    isDense: true, // Added this
+                    enabled: false,
+                    filled: true,
+                    fillColor: Colors.yellow.shade200,
+                    contentPadding: EdgeInsets.all(8), // Added this
+                  ),
+                  onSubmitted: (String value) {
+                    ScanTAG = value;
+                    getDataDisplay(value);
+                  },
+                ),
                 SizedBox(height: 10.0),
                 Text('PD Qty : '),
                 SizedBox(height: 5.0),
                 TextField(
-                  controller: TextEditingController(text: ScanTAG),
+                  controller: TextEditingController(text: uQty.toString()),
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     // labelText: 'Production TAG Scan...',
@@ -232,6 +252,10 @@ class PackingScanPDtate extends State<PackingScanPD> {
                     contentPadding: EdgeInsets.all(8), // Added this
                   ),
                 ),
+                SizedBox(height: 5.0),
+                //List View//
+                MyPackingList(),
+                //List Data//
               ],
             )),
       ),
@@ -277,12 +301,12 @@ class PackingScanPDtate extends State<PackingScanPD> {
         // Do something
       });
       ScanTAG = value;
-      await _clearData();
+      // await _clearData();
       if (value != '-1') {
         setState(() {
           ScanTAG = value;
-          sStatus = "Checked Completed.";
-          statusErr = false;
+          //  sStatus = "Add Data Completed.";
+          //  statusErr = false;
         });
 
         Future.delayed(Duration(milliseconds: 100), () {
@@ -290,8 +314,7 @@ class PackingScanPDtate extends State<PackingScanPD> {
         });
 
         await _CheckPTAG(barcode, ScanTAG);
-        await _fetchJobs(dbs.exid());
-
+        // await _fetchJobs(dbs.exid());
         ///////end//////////
       } else {
         setState(() {
@@ -328,7 +351,7 @@ class PackingScanPDtate extends State<PackingScanPD> {
 
   void showInSnackBar(String value) {
     // ignore: deprecated_member_use
-    _scaffoldKey.currentState?.showSnackBar(snackBar);
+    // _scaffoldKey.currentState?.showSnackBar(snackBar);
   }
 
   void setValueAsstCode1(String value) {
@@ -341,11 +364,12 @@ class PackingScanPDtate extends State<PackingScanPD> {
 
   Future<String> _clearData() async {
     setState(() {
-      barcode = "";
+      // barcode = "";
       statusErr = false;
       sStatus = "";
       checkby = "";
-      iQty = 0;
+      //  iQty = 0;
+      //  uQty = 0;
       qtyNew = 0;
 
       remark = "";
@@ -368,7 +392,8 @@ class PackingScanPDtate extends State<PackingScanPD> {
           jsb.forEach((element) {
             setState(() {
               statusErr = false;
-              sStatus = "Checked already!";
+              sStatus = "";
+              PartNo = element.pPartNo;
               barcode = element.pListNo.toString() +
                   ',' +
                   element.pExportNo +
@@ -382,13 +407,13 @@ class PackingScanPDtate extends State<PackingScanPD> {
                   element.pQty.toString() +
                   ',' +
                   element.pid.toString();
-              ScanTAG = barcode;
+              // ScanTAG = barcode;
 
               iQty = element.pQty;
             });
           });
           if (jsb.isEmpty) {
-            _showMyDialogErr(_value);
+            // _showMyDialogErr(_value);
           }
         } else {
           //throw Exception('Failed to load Data from API');
@@ -402,24 +427,43 @@ class PackingScanPDtate extends State<PackingScanPD> {
   }
 
   Future<void> _CheckPTAG(String pTag, String cTag) async {
-    var body =
-        jsonEncode({'pTAG': '$pTag', 'cTAG': '$cTag', 'pStatus': 'Check'});
-    final response = await http.post(
-      Uri.parse(dbs.url + 'Export/PostCheckEx01'),
-      headers: {"Content-Type": "application/json"},
-      body: body,
-    );
-    sStatus = "";
-    if (response.statusCode == 200) {
-      setState(() {
-        statusErr = true;
-        sStatus = "successfuly.";
+    if (pTag != '') {
+      String pid = dbs.exid();
+      String sUser = dbs.users;
+      var body = jsonEncode({
+        'pTAG': '$pTag',
+        'cTAG': '$cTag',
+        'pStatus': 'Check',
+        'pid': '$pid',
+        'sUser': '$sUser'
       });
-    } else {
-      setState(() {
-        statusErr = true;
-        sStatus = "Error Production TAG!!";
-      });
+      final response = await http.post(
+        Uri.parse(dbs.url + 'Export/PostCheckEx01'),
+        headers: {"Content-Type": "application/json"},
+        body: body,
+      );
+      sStatus = "";
+      if (response.statusCode == 200) {
+        setState(() {
+          statusErr = false;
+          sStatus = "Add Successfuly.";
+        });
+        var snackBar = SnackBar(
+          content: Text('Successfuly'),
+          backgroundColor: Colors.green.shade200,
+          duration: const Duration(seconds: 1),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        final res = jsonDecode(response.body);
+        final _mess = JException.fromJson(res);
+        // getErr = response.body.split(':');
+        _showMyDialogErr(_mess.mMess);
+        setState(() {
+          statusErr = true;
+          sStatus = sStatus = _mess.mMess;
+        });
+      }
     }
   }
 
@@ -431,14 +475,14 @@ class PackingScanPDtate extends State<PackingScanPD> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-            'AssetCode Can not Found!!' + accCode1,
+            'Error : ' + dbs.exid(),
             style: TextStyle(color: Colors.red),
           ),
           content: SingleChildScrollView(
             child: Column(
-              children: const <Widget>[
+              children: <Widget>[
                 Text(
-                  'ไม่มีเลข Fixed Asset Code นี้ใน Check List.',
+                  accCode1,
                   style: TextStyle(
                     color: Colors.red,
                   ),
@@ -454,7 +498,7 @@ class PackingScanPDtate extends State<PackingScanPD> {
               onPressed: () {
                 Navigator.of(context).pop();
                 setState(() {
-                  barcode = accCode1;
+                  ScanTAG = "";
                 });
               },
             ),
