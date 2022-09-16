@@ -26,6 +26,7 @@ class ExportListID {
   final String pOrderNo;
   final String pPartNo;
   final String pCustItem;
+  final String pInvoice;
 
   ExportListID({
     required this.pGroupPDA1,
@@ -36,6 +37,7 @@ class ExportListID {
     required this.pOrderNo,
     required this.pPartNo,
     required this.pCustItem,
+    required this.pInvoice,
   });
   factory ExportListID.fromJson(Map<String, dynamic> json) {
     return ExportListID(
@@ -47,6 +49,7 @@ class ExportListID {
       pOrderNo: json['OrderNo'],
       pPartNo: json['PartNo'],
       pCustItem: json['CustItem'],
+      pInvoice: json['InvoiceNo'],
     );
   }
 }
@@ -65,10 +68,10 @@ class ExListView {
   });
   factory ExListView.fromJson(Map<String, dynamic> json) {
     return ExListView(
-      pQty: json['Qty'],
+      pQty: json['Quantity'],
       pid: json['id'],
       pPartNo: json['PartNo'],
-      pPDTAG: json['PTAG'],
+      pPDTAG: json['PKTAG'],
     );
   }
 }
@@ -105,3 +108,6 @@ class JException {
     return JException(mMess: json['Message']);
   }
 }
+
+//////////////////////TEST DATA////////////////////
+
