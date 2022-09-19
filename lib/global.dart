@@ -36,6 +36,19 @@ class DBData {
     _User = userx;
   }
 
+  ////////////////////////////String User
+  // ignore: non_constant_identifier_names
+  static String _GroupM = "";
+  // ignore: unnecessary_getters_setters
+  String get groupM {
+    return _GroupM;
+  }
+
+  // ignore: unnecessary_getters_setters
+  set groupM(String g) {
+    _GroupM = g;
+  }
+
 ///////////////////////////CheckListCount
   static int _listcount = 0;
   // ignore: unnecessary_getters_setters
@@ -85,12 +98,12 @@ class DBData {
   }
 
   ///////////////////Url CheckNo
-  static String _url = "http://192.168.1.12/webnaptApi/api/";
+  static String _url = "http://1.179.133.222:8090/api/";
   //static String _url = "http://1.179.133.222:8090/";
   //"http://10.0.2.2:8090/";
   String get url => _url;
   //////////////////Url ...
-  static String _urlCheckNo = "http://192.168.1.12/webnaptApi/api/";
+  static String _urlCheckNo = "http://1.179.133.222:8090/api/";
   //static String _urlCheckNo = "http://1.179.133.222:8090/api/CheckNo/";
   //"http://10.0.2.2:8090/api/checkNo/";
   String get urlCheckNo => _urlCheckNo;

@@ -1,3 +1,4 @@
+import 'package:barcodeapp/content/expacking/PackingShippingH1.dart';
 import 'package:barcodeapp/content/homepage.dart';
 import 'package:barcodeapp/global.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,7 @@ class _Buildbutton02State extends State<Buildbutton02> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => FxApp02(),
+                builder: (context) => PackingShipping1(),
               ));
         },
         child: Row(

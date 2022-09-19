@@ -1,12 +1,11 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings, prefer_const_constructors, unnecessary_string_interpolations
 import 'dart:async';
 import 'dart:convert';
-import 'package:barcodeapp/content/expacking/packing.dart';
+import 'package:barcodeapp/content/expacking/PackingChangeQty.dart';
 import 'package:barcodeapp/global.dart';
 import 'package:barcodeapp/model/sqlmanament.dart';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -39,8 +38,7 @@ class PackingScanPDtate extends State<PackingScanPD> {
   List<ExListView> exviewS0 = <ExListView>[];
 
   final ButtonStyle flatButtonStyle = TextButton.styleFrom(
-    primary: Colors.black87,
-    minimumSize: Size(88, 36), //Size(88, 36),
+    foregroundColor: Colors.black87, minimumSize: Size(88, 36), //Size(88, 36),
     padding: EdgeInsets.symmetric(horizontal: 16.0),
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(2.0)),
@@ -77,6 +75,7 @@ class PackingScanPDtate extends State<PackingScanPD> {
   String remark = "";
   String PartNo = "";
   String Invoice = "";
+
   final formatter = NumberFormat("###,###");
   int iQty = 0;
   int uQty = 0;
@@ -285,8 +284,8 @@ class PackingScanPDtate extends State<PackingScanPD> {
             backgroundColor: Colors.orangeAccent,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.clear_all),
-            label: 'Clear',
+            icon: Icon(Icons.refresh),
+            label: 'Refresh',
           ),
         ],
         selectedLabelStyle: TextStyle(fontSize: 16),
@@ -398,9 +397,22 @@ class PackingScanPDtate extends State<PackingScanPD> {
         Future.delayed(Duration(milliseconds: 100), () {
           // Do something
         });
-
-        await _CheckPTAG(barcode, ScanTAG);
-        await _ExportPDA01(barcode);
+        if (fixQty) {
+          if (!mounted) return;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PackingChangeQty(
+                tobj: barcode,
+                tobj2: ScanTAG,
+              ),
+            ),
+          ).then((value) => {_ExportPDA01(barcode)});
+          // print('sss');
+        } else {
+          await _CheckPTAG(barcode, ScanTAG);
+          await _ExportPDA01(barcode);
+        }
         // await _fetchJobs(dbs.exid());
         ///////end//////////
       } else {
@@ -430,10 +442,12 @@ class PackingScanPDtate extends State<PackingScanPD> {
       ScanTAG = "";
       getDataDisplay("SCANQR");
     } else if (index == 2) {
-      _clearData();
+      // _clearData();
+      _ExportPDA01(barcode);
     } else if (index == 0) {
       //  createJobPost();
-      _showMyDialogBackHome("");
+      // Navigator.of(context).pop();
+      _showMyDialogSave("");
     }
   }
 
@@ -539,6 +553,7 @@ class PackingScanPDtate extends State<PackingScanPD> {
         if (response.statusCode == 200) {
           List jsonResponse = json.decode(response.body);
           // print(response.body);
+          uQty = 0;
           exviewS0 =
               jsonResponse.map((job) => ExListView.fromJson(job)).toList();
           exviewS0.forEach((element) {
@@ -624,6 +639,105 @@ class PackingScanPDtate extends State<PackingScanPD> {
         var snackBar = SnackBar(
           content: Text('Delete Successfuly'),
           backgroundColor: Colors.red,
+          duration: const Duration(seconds: 1),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        final res = jsonDecode(response.body);
+        final _mess = JException.fromJson(res);
+        // getErr = response.body.split(':');
+        _showMyDialogErr(_mess.mMess);
+        setState(() {
+          statusErr = true;
+          sStatus = sStatus = _mess.mMess;
+        });
+      }
+    }
+  }
+
+  Future<void> _PrintAuto(String _id) async {
+    if (_id != '') {
+      String pid = dbs.exid();
+      String sUser = dbs.users;
+      var body = jsonEncode({
+        'pTAG': '',
+        'cTAG': '',
+        'pStatus': 'Check',
+        'pid': '$_id',
+        'sUser': '$sUser'
+      });
+      final response = await http.post(
+        Uri.parse(dbs.url + 'Export/PrintEx'),
+        headers: {"Content-Type": "application/json"},
+        body: body,
+      );
+      sStatus = "";
+      if (response.statusCode == 200) {
+        setState(() {
+          statusErr = false;
+          sStatus = "Send Successfuly.";
+          _ExportPDA01(barcode);
+        });
+        var snackBar = SnackBar(
+          content: Text(
+            'Send to Print Successfuly',
+            style: TextStyle(color: Colors.amber.shade900),
+          ),
+          backgroundColor: Colors.lightBlue.shade100,
+          duration: const Duration(seconds: 1),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        final res = jsonDecode(response.body);
+        final _mess = JException.fromJson(res);
+        // getErr = response.body.split(':');
+        _showMyDialogErr(_mess.mMess);
+        setState(() {
+          statusErr = true;
+          sStatus = sStatus = _mess.mMess;
+        });
+      }
+    }
+  }
+
+  Future<void> _SaveData(String _id) async {
+    if (_id != '') {
+      String pid = dbs.exid();
+      String sUser = dbs.users;
+      String uq = uQty.toString();
+      String GSmall = dbs.groupM;
+      String gr = "";
+      if (isChecked) {
+        gr = "True";
+      } else {
+        gr = "";
+      }
+      var body = jsonEncode({
+        'sUser': '$sUser',
+        'sInvoice': '$Invoice',
+        'sGSmall': '$GSmall',
+        'sgrille': '$gr',
+        'pid': '$_id',
+        'sqty': '$uq'
+      });
+      final response = await http.post(
+        Uri.parse(dbs.url + 'Export/ConfirmEx'),
+        headers: {"Content-Type": "application/json"},
+        body: body,
+      );
+      sStatus = "";
+      if (response.statusCode == 200) {
+        setState(() {
+          statusErr = false;
+          sStatus = "Save Data Successfuly.";
+          //_ExportPDA01(barcode);
+        });
+        var snackBar = SnackBar(
+          content: Text(
+            'Save Data Successfuly',
+            style: TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Colors.green,
           duration: const Duration(seconds: 1),
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -738,20 +852,20 @@ class PackingScanPDtate extends State<PackingScanPD> {
     );
   }
 
-  Future<void> _showMyDialogBackHome(String _ckNo) async {
+  Future<void> _showMyDialogSave(String _ckNo) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Back to Export Page?',
-              style: TextStyle(color: Colors.black)),
+          title: Text('Save Data :' + Invoice,
+              style: TextStyle(color: Colors.blue)),
           content: SingleChildScrollView(
             child: Column(
               children: const <Widget>[
                 Text(
-                  'ต้องการกลับไปหน้า Export หรือไม่?',
-                  style: TextStyle(color: Colors.pink),
+                  'ต้องการบันทึก Packing นี้ หรือไม่?',
+                  style: TextStyle(color: Colors.green),
                 ),
 
                 ///Text('Would you like to approve of this message?'),
@@ -760,15 +874,10 @@ class PackingScanPDtate extends State<PackingScanPD> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Confirm'),
+              child: Text('Save'),
               onPressed: () async {
-                // Navigator.of(context).pop();
-                // await upDateRowSqInsert();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Packing(),
-                    ));
+                Navigator.of(context).pop();
+                await _SaveData(dbs.exid().toString());
               },
             ),
             TextButton(
@@ -848,7 +957,7 @@ class PackingScanPDtate extends State<PackingScanPD> {
               child: Text('Confirm'),
               onPressed: () async {
                 Navigator.of(context).pop();
-                //await _DeleteRec(_id);
+                await _PrintAuto(dbs.exid());
               },
             ),
             TextButton(

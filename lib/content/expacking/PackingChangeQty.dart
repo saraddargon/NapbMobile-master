@@ -3,7 +3,6 @@
 import 'dart:async';
 import 'dart:convert';
 //import 'package:barcode_scan2/barcode_scan2.dart';
-import 'package:barcodeapp/content/expacking/PackingScanPD.dart';
 import 'package:barcodeapp/content/mainpage.dart';
 import 'package:barcodeapp/global.dart';
 import 'package:barcodeapp/model/sqlmanament.dart';
@@ -15,16 +14,17 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:barcodeapp/model/PackingModel.dart';
 
 // ignore: must_be_immutable
-class Packing extends StatefulWidget {
+class PackingChangeQty extends StatefulWidget {
   String tobj = "";
-  //Packing({Key? key, required this.tobj}) : super(key: key);
-  Packing({Key? key}) : super(key: key);
+  String tobj2 = "";
+  // const PackingChangeQty({super.key, required this.tobj});
+  PackingChangeQty({super.key, required this.tobj, required this.tobj2});
 
   @override
-  SPackingState createState() => SPackingState();
+  PackingChangeQtyState createState() => PackingChangeQtyState();
 }
 
-class SPackingState extends State<Packing> {
+class PackingChangeQtyState extends State<PackingChangeQty> {
   final ButtonStyle style = ElevatedButton.styleFrom(
     textStyle: const TextStyle(fontSize: 20),
     elevation: 5.0,
@@ -39,6 +39,7 @@ class SPackingState extends State<Packing> {
   DBData dbs = DBData();
   bool statusErr = false;
   String barcode = "";
+  String PDTag = "";
   String aName = "";
   String tName = "";
   String dName = "";
@@ -53,8 +54,7 @@ class SPackingState extends State<Packing> {
   bool lstricker = false;
   String checkby = "";
   final ButtonStyle flatButtonStyle = TextButton.styleFrom(
-    primary: Colors.black87,
-    minimumSize: Size(88, 36), //Size(88, 36),
+    foregroundColor: Colors.black87, minimumSize: Size(88, 36), //Size(88, 36),
     padding: EdgeInsets.symmetric(horizontal: 16.0),
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(2.0)),
@@ -80,7 +80,9 @@ class SPackingState extends State<Packing> {
   String remark = "";
   final formatter = NumberFormat("###,###");
   int iQty = 0;
+  int uQty = 0;
   int qtyNew = 0;
+  String LotNo = "";
   String sStatus = "";
 
   int _selectedIndex = 0;
@@ -106,9 +108,10 @@ class SPackingState extends State<Packing> {
   initState() {
     super.initState();
     barcode = widget.tobj;
+    PDTag = widget.tobj2;
     if (barcode != '') {
       //_clearData();
-      _fetchJobs(barcode);
+      _fetchJobs(PDTag);
     }
   }
 
@@ -116,7 +119,7 @@ class SPackingState extends State<Packing> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text('Export Packing '),
+        title: Text('Packing Change Quantity'),
         backgroundColor: Colors.blueGrey,
         actions: <Widget>[
           IconButton(
@@ -126,7 +129,7 @@ class SPackingState extends State<Packing> {
             ),
             onPressed: () {
               if (barcode != '') {
-                //  _showMyDialogClear(barcode);
+                // _showMyDialogClear(barcode);
               }
             },
           )
@@ -154,55 +157,119 @@ class SPackingState extends State<Packing> {
                 controller: TextEditingController(text: barcode),
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 18,
+                  fontSize: 14,
                 ),
                 decoration: InputDecoration(
                   //fillColor: Colors.green.shade50,
                   border: UnderlineInputBorder(),
                   filled: true,
-                  enabled: true,
+                  enabled: false,
                   icon: Icon(
                     Icons.sticky_note_2,
                     color: Colors.orange,
-                    size: 30.0,
+                    size: 20.0,
                   ),
-                  hintText: 'Scan QR List?',
-                  labelText: 'Scan QR Code :',
+                  hintText: 'List Export TAG:',
+                  labelText: 'List Export TAG:',
                 ),
                 keyboardType: TextInputType.text,
                 onFieldSubmitted: (String value) {
                   barcode = value;
-                  getDataDisplay(value);
+                  // getDataDisplay(value);
                 },
               ),
-              SizedBox(height: 20.00),
+              SizedBox(height: 5.00),
+              TextField(
+                controller: TextEditingController(text: PDTag),
+                maxLines: null,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                ),
+                decoration: InputDecoration(
+                  //fillColor: Colors.green.shade50,
+                  border: UnderlineInputBorder(),
+                  filled: true,
+                  enabled: false,
+                  icon: Icon(
+                    Icons.description,
+                    color: Color(0xff5ac18e),
+                    size: 20.0,
+                  ),
+                  labelText: 'PD TAG :',
+                ),
+              ),
+              SizedBox(height: 5.00),
               TextField(
                 controller: TextEditingController(text: aName),
                 maxLines: null,
                 style: TextStyle(
                   color: Colors.black,
-                  fontSize: 16,
+                  fontSize: 14,
                 ),
                 decoration: InputDecoration(
                   //fillColor: Colors.green.shade50,
                   border: UnderlineInputBorder(),
                   filled: true,
-                  enabled: true,
+                  enabled: false,
                   icon: Icon(
                     Icons.description,
                     color: Color(0xff5ac18e),
-                    size: 30.0,
+                    size: 20.0,
                   ),
-                  labelText: 'Group (small) :',
+                  labelText: 'Part No. :',
                 ),
               ),
-              SizedBox(height: 20.00),
+              SizedBox(height: 5.00),
+              TextField(
+                controller: TextEditingController(text: LotNo),
+                maxLines: null,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                ),
+                decoration: InputDecoration(
+                  //fillColor: Colors.green.shade50,
+                  border: UnderlineInputBorder(),
+                  filled: true,
+                  enabled: false,
+                  icon: Icon(
+                    Icons.description,
+                    color: Color(0xff5ac18e),
+                    size: 20.0,
+                  ),
+                  labelText: 'Lot No. :',
+                ),
+              ),
+              SizedBox(height: 5.00),
               TextField(
                 controller: TextEditingController(text: iQty.toString()),
                 maxLines: null,
                 readOnly: true,
                 style: TextStyle(
                   color: Colors.black,
+                  fontSize: 14,
+                ),
+                decoration: InputDecoration(
+                  //fillColor: Colors.green.shade50,
+                  border: UnderlineInputBorder(),
+                  filled: true,
+                  enabled: false,
+                  icon: Icon(
+                    Icons.description,
+                    color: Color(0xff5ac18e),
+                    size: 20.0,
+                  ),
+                  labelText: 'Qty OfTAG :',
+                ),
+              ),
+              SizedBox(height: 15.00),
+              TextField(
+                controller: TextEditingController(text: uQty.toString()),
+                maxLines: 1,
+                readOnly: false,
+                style: TextStyle(
+                  color: Colors.black,
                   fontSize: 16,
                 ),
                 decoration: InputDecoration(
@@ -210,37 +277,23 @@ class SPackingState extends State<Packing> {
                   border: UnderlineInputBorder(),
                   filled: true,
                   enabled: true,
+                  fillColor: Colors.yellow.shade200,
                   icon: Icon(
                     Icons.description,
-                    color: Color(0xff5ac18e),
-                    size: 30.0,
+                    color: Colors.pink.shade300,
+                    size: 20.0,
                   ),
-                  labelText: 'Quantity :',
+                  labelText: 'Input Qty :',
                 ),
-              ),
-              SizedBox(height: 50.00),
-              TextButton(
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.blue,
-                ),
-                onPressed: () {
-                  //print("sompong1");
-                  if (barcode != '') {
-                    dbs.groupM = aName;
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PackingScanPD(),
-                        ));
-                  }
+                keyboardType: TextInputType.number,
+                onSubmitted: (value) {
+                  setState(() {
+                    uQty = int.parse(value);
+                    //  print('uQty=>' + uQty.toString());
+                  });
                 },
-                child: Text(
-                  'Next Step',
-                  style: TextStyle(
-                    fontSize: 30,
-                  ),
-                ),
               ),
+
               //Step Test
               //  TextField(
               //     controller: TextEditingController(text: dbs.exid()),
@@ -265,11 +318,8 @@ class SPackingState extends State<Packing> {
             label: 'Back',
           ),
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.qr_code_2,
-              size: 30,
-            ),
-            label: 'Scan Barcode',
+            icon: Icon(Icons.save),
+            label: 'Save Data',
             backgroundColor: Colors.orangeAccent,
           ),
           BottomNavigationBarItem(
@@ -289,7 +339,7 @@ class SPackingState extends State<Packing> {
 
 /////////////////////////////////Function//////////////////////////////////
   Future<void> getDataDisplay(String value) async {
-    if (true) {
+    if (dbs.checkNo != "" && dbs.checkNo != "Error") {
       if (value == 'SCANQR') {
         value = await FlutterBarcodeScanner.scanBarcode(
             "#ff6666", "Cancel", false, ScanMode.DEFAULT);
@@ -303,7 +353,7 @@ class SPackingState extends State<Packing> {
       if (value != '-1') {
         setState(() {
           barcode = value;
-          sStatus = "Scan Completed.";
+          sStatus = "Checked Completed.";
           statusErr = false;
         });
         barcode = value;
@@ -323,10 +373,15 @@ class SPackingState extends State<Packing> {
       }
       //after read.
 
+    } else {
+      setState(() {
+        statusErr = true;
+        sStatus = "Error List No Empty!!";
+      });
     }
   }
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(int index) async {
     _selectedIndex = index;
     setState(() {
       _selectedIndex = index;
@@ -334,13 +389,16 @@ class SPackingState extends State<Packing> {
 
     if (index == 1) {
       statusErr = false;
-      getDataDisplay("SCANQR");
+      // getDataDisplay("SCANQR");
+      //Save Data//
+      _showMyDialogSave("");
     } else if (index == 2) {
-      _clearData();
+      //  _clearData();
+      // Navigator.pop(context);
     } else if (index == 0) {
       //  createJobPost();
-      Navigator.of(context).pop();
-      //_showMyDialogBackHome("");
+      // _showMyDialogBackHome("");
+      Navigator.pop(context, true);
     }
   }
 
@@ -383,286 +441,61 @@ class SPackingState extends State<Packing> {
   }
 
   Future<void> _fetchJobs(String _value) async {
-    if (dbs.checkNo != '' && _value != '') {
-      var CheckPDTAG = _value.split(',');
-      if (true && (CheckPDTAG.length == 7 || CheckPDTAG.length == 1)) {
-        final jobsListAPIUrl = dbs.url + 'Export/ListTAG/' + _value;
-        // print(jobsListAPIUrl);
-        final response = await http.get(Uri.parse(jobsListAPIUrl));
+    if (_value != "") {
+      var PdATA = _value.split(',');
+      if (PdATA.length == 8) {
+        setState(() {
+          aName = PdATA[6];
+          LotNo = PdATA[4];
+          iQty = int.parse(PdATA[2]);
+          uQty = int.parse(PdATA[2]);
+        });
+      } else {}
+    }
+  }
+
+  Future<void> _SaveData(String _value) async {
+    if (uQty != 0) {
+      String pid = dbs.exid();
+      String sUser = dbs.users;
+      String uQ = uQty.toString();
+      var body = jsonEncode({
+        'pTAG': '$barcode',
+        'cTAG': '$PDTag',
+        'pStatus': '$uQ',
+        'pid': '$pid',
+        'sUser': '$sUser'
+      });
+      if (true) {
+        final jobsListAPIUrl = dbs.url + 'Export/PostCheckEx02';
+        // print(body);
+        final response = await http.post(
+          Uri.parse(jobsListAPIUrl),
+          headers: {"Content-Type": "application/json"},
+          body: body,
+        );
 
         if (response.statusCode == 200) {
-          List jsonResponse = json.decode(response.body);
-          List<ExportListID1> jsb = jsonResponse
-              .map((job) => new ExportListID1.fromJson(job))
-              .toList();
-          jsb.forEach((element) {
-            //aName = element.pGroupPDA1;
-            // iQty = element.pQty;
-            setState(() {
-              statusErr = false;
-              sStatus = "Checked already!";
-              barcode = _value;
-              aName = element.pGroupPDA1;
-              iQty = element.pQty;
-              dbs.pexid = element.pid.toString();
-            });
-            // qtyNew = element.qtyNew;
-            // aUse = false;
-            // aNotUse = false;
-            // aDamage = false;
-            // aLoss = false;
-            // aTransfer = false;
-            // lOK = false;
-            // lNO = false;
-            // lstricker = false;
-            // remark = element.remark;
-            // aUse = element.aUse == 'P' ? true : false;
-            // aNotUse = element.aNotUse == 'P' ? true : false;
-            // aDamage = element.aDamage == 'P' ? true : false;
-            // aTransfer = element.aTransfer == 'P' ? true : false;
-            // aLoss = element.aLoss == 'P' ? true : false;
-            // lOK = element.lOK == 'P' ? true : false;
-            // lNO = element.lNO == 'P' ? true : false;
-            // lstricker = element.lNotStick == 'P' ? true : false;
-
-            // if (element.checkby == '') {
-            //   setState(() {
-            //     aUse = true;
-            //     lOK = true;
-            //   });
-            // } else {
-            //   setState(() {
-            //     statusErr = false;
-            //     sStatus = "Checked already!";
-            //   });
-            // }
-          });
-          if (jsb.isEmpty) {
-            _showMyDialogErr(_value);
-          }
+          var snackBar = SnackBar(
+            content: Text('Update Successfuly'),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 1),
+          );
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          Navigator.of(context).pop();
         } else {
+          final res = jsonDecode(response.body);
+          final _mess = JException.fromJson(res);
+          if (!mounted) return;
+          Navigator.of(context).pop();
           //throw Exception('Failed to load Data from API');
           setState(() {
             statusErr = true;
-            sStatus = "Error Check No or Asset Code Empty!!";
-          });
-        }
-      } else {
-        // //offline//
-        // List<SfxAsset> sq = await sqm.getTemp2Item(dbs.checkNo, _value);
-        // // print('test wifi => ' + sq.length.toString());
-        // if (sq.length > 0) {
-        //   sq.forEach((element) {
-        //     barcode = element.assetCode;
-        //     aName = element.assetName;
-        //     dName = element.dept;
-        //     tName = element.thaiName;
-        //     aName = aName + '\n' + tName;
-        //     aDate = element.checkDate;
-        //     iQty = element.inputQty;
-        //     qtyNew = element.qtyNew;
-        //     aUse = false;
-        //     aNotUse = false;
-        //     aDamage = false;
-        //     aLoss = false;
-        //     aTransfer = false;
-        //     lOK = false;
-        //     lNO = false;
-        //     lstricker = false;
-        //     remark = element.remark;
-        //     aUse = element.aUse == 'P' ? true : false;
-        //     aNotUse = element.aNotUse == 'P' ? true : false;
-        //     aDamage = element.aDamage == 'P' ? true : false;
-        //     aTransfer = element.aTransfer == 'P' ? true : false;
-        //     aLoss = element.aLoss == 'P' ? true : false;
-        //     lOK = element.lOK == 'P' ? true : false;
-        //     lNO = element.lNO == 'P' ? true : false;
-        //     lstricker = element.lNotStick == 'P' ? true : false;
-
-        //     if (element.checkPoint == '') {
-        //       setState(() {
-        //         aUse = true;
-        //         lOK = true;
-        //       });
-        //     } else {
-        //       setState(() {
-        //         statusErr = false;
-        //         sStatus = "Checked already!";
-        //       });
-        //     }
-        //   });
-        //   if (sq.isEmpty) {
-        //     _showMyDialogErr(_value);
-        //   }
-        // } else {
-        //   //throw Exception('Failed to load Data from API');
-        //   setState(() {
-        //     statusErr = true;
-        //     sStatus = "Error Check No or Asset Code Empty!!";
-        //   });
-        // }
-      }
-    }
-  }
-
-  //////////Job Post///
-  Future<void> createJobPost() async {
-    if (dbs.checkNo != '' && barcode != '') {
-      String ckNo = dbs.checkNo;
-      dbs.checkwifi();
-      // dbs.wifis = 'No';
-      if (dbs.wifis == "Yes") {
-        var body = jsonEncode({
-          'CheckNo': '$ckNo',
-          'AssetCode': '$barcode',
-          'InputQty': '$iQty',
-          'AUse': '${aUse == true ? 'P' : ''}',
-          'ANotUse': '${aNotUse == true ? 'P' : ''}',
-          'ADamage': '${aDamage == true ? 'P' : ''}',
-          'ATransfer': '${aTransfer == true ? 'P' : ''}',
-          'ALoss': '${aLoss == true ? 'P' : ''}',
-          'LOK': '${lOK == true ? 'P' : ''}',
-          'LNO': '${lNO == true ? 'P' : ''}',
-          'LNotStick': '${lstricker == true ? 'P' : ''}',
-          'Remark': '$remark',
-          'CheckBy': '${dbs.users}'
-        });
-
-        final response = await http.post(
-          Uri.parse(dbs.url + 'api/checkup'),
-          headers: {"Content-Type": "application/json"},
-          body: body,
-        );
-
-        if (response.statusCode == 200) {
-          // If the server did return a 201 CREATED response,
-          // then parse the JSON.
-          //print(body);
-          showInSnackBar("");
-          // return JobPost.fromJson(jsonDecode(response.body));
-        } else {
-          // If the server did not return a 201 CREATED response,
-          // then throw an exception.
-          //throw Exception('Failed to create album.');
-          setState(() {
-            statusErr = true;
-            sStatus = "Error Can't Post Checked.!!";
-          });
-        }
-      } else {
-        //offline Update//
-        var sqlc = "update Temp2 set ";
-        sqlc += " Ause='${aUse == true ? 'P' : ''}'";
-        sqlc += ",ANotUse='${aNotUse == true ? 'P' : ''}'";
-        sqlc += ",ADamage='${aDamage == true ? 'P' : ''}'";
-        sqlc += ",ALoss='${aLoss == true ? 'P' : ''}'";
-        sqlc += ",ATransfer='${aTransfer == true ? 'P' : ''}'";
-        sqlc += ",LOK='${lOK == true ? 'P' : ''}'";
-        sqlc += ",LNO='${lNO == true ? 'P' : ''}'";
-        sqlc += ",LNotStick='${lstricker == true ? 'P' : ''}'";
-        sqlc += ",Remark='$remark'";
-        sqlc += ",CheckBy='" + dbs.users + "'";
-        sqlc += ",CheckPoint='Check'";
-        sqlc += ",InputQty=" + iQty.toString();
-        sqlc += " where CheckNo='" + dbs.checkNo + "'";
-        sqlc += " and AssetCode='" + barcode + "'";
-
-        //print(sqlc);
-        if (await sqm.updateTemp2(sqlc) > 0) {
-          showInSnackBar("");
-        } else {
-          setState(() {
-            statusErr = true;
-            sStatus = "Error Can't Post Checked.!!";
+            sStatus = _mess.mMess.toString();
           });
         }
       }
-    } else {
-      setState(() {
-        statusErr = true;
-        sStatus = "Error Can't Post Checked.!!";
-      });
-    }
-  }
-
-  Future<void> createJobPostBack() async {
-    if (dbs.checkNo != '' && barcode != '') {
-      String ckNo = dbs.checkNo;
-      dbs.checkwifi();
-      // dbs.wifis = 'No';
-      if (dbs.wifis == "Yes") {
-        var body = jsonEncode({
-          'CheckNo': '$ckNo',
-          'AssetCode': '$barcode',
-          'InputQty': '$iQty',
-          'AUse': '${aUse == true ? 'P' : ''}',
-          'ANotUse': '${aNotUse == true ? 'P' : ''}',
-          'ADamage': '${aDamage == true ? 'P' : ''}',
-          'ATransfer': '${aTransfer == true ? 'P' : ''}',
-          'ALoss': '${aLoss == true ? 'P' : ''}',
-          'LOK': '${lOK == true ? 'P' : ''}',
-          'LNO': '${lNO == true ? 'P' : ''}',
-          'LNotStick': '${lstricker == true ? 'P' : ''}',
-          'Remark': '$remark',
-          'CheckBy': '$dbs.users'
-        });
-
-        final response = await http.post(
-          Uri.parse(dbs.url + 'api/checkback'),
-          headers: {"Content-Type": "application/json"},
-          body: body,
-        );
-
-        if (response.statusCode == 200) {
-          // If the server did return a 201 CREATED response,
-          // then parse the JSON.
-          //showInSnackBar("");
-          // ignore: deprecated_member_use
-          //  _scaffoldKey.currentState?.showSnackBar(snackBarBack);
-          //  ScaffoldMessenger.of(context).showSnackBar(snackBarBack);
-          // return JobPost.fromJson(jsonDecode(response.body));
-        } else {
-          // If the server did not return a 201 CREATED response,
-          // then throw an exception.
-          //throw Exception('Failed to create album.');
-          setState(() {
-            statusErr = true;
-            sStatus = "Error Can't Post Checked.!!";
-          });
-        }
-      } else {
-        //offline Update//
-        var sqlc = "update Temp2 set ";
-        sqlc += " Ause=''";
-        sqlc += ",ANotUse=''";
-        sqlc += ",ADamage=''";
-        sqlc += ",ALoss=''";
-        sqlc += ",ATransfer=''";
-        sqlc += ",LOK=''";
-        sqlc += ",LNO=''";
-        sqlc += ",LNotStick=''";
-        sqlc += ",Remark=''";
-        sqlc += ",CheckBy=''";
-        sqlc += ",CheckPoint=''";
-        sqlc += ",InputQty=1";
-        sqlc += " where CheckNo='" + dbs.checkNo + "'";
-        sqlc += " and AssetCode='" + barcode + "'";
-
-        //print(sqlc);
-        if (await sqm.updateTemp2(sqlc) > 0) {
-          showInSnackBar("");
-        } else {
-          setState(() {
-            statusErr = true;
-            sStatus = "Error Can't Post Checked.!!";
-          });
-        }
-      }
-    } else {
-      setState(() {
-        statusErr = true;
-        sStatus = "Error Can't Post Checked.!!";
-      });
     }
   }
 
@@ -748,7 +581,7 @@ class SPackingState extends State<Packing> {
                 // ignore: deprecated_member_use
                 Navigator.of(context).pop();
 
-                await createJobPostBack();
+                //  await createJobPostBack();
                 await _fetchJobs(accCode1);
               },
             ),
@@ -764,20 +597,20 @@ class SPackingState extends State<Packing> {
     );
   }
 
-  Future<void> _showMyDialogBackHome(String _ckNo) async {
+  Future<void> _showMyDialogSave(String _ckNo) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Back to Export Page?',
+          title: Text('Do you want Save Value?',
               style: TextStyle(color: Colors.black)),
           content: SingleChildScrollView(
             child: Column(
-              children: const <Widget>[
+              children: <Widget>[
                 Text(
-                  'ต้องการกลับไปหน้า Export หรือไม่?',
-                  style: TextStyle(color: Colors.pink),
+                  'Update Qty =' + uQty.toString(),
+                  style: TextStyle(color: Colors.blue),
                 ),
 
                 ///Text('Would you like to approve of this message?'),
@@ -786,16 +619,9 @@ class SPackingState extends State<Packing> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Confirm'),
+              child: Text('Save'),
               onPressed: () async {
-                // Navigator.of(context).pop();
-                // await upDateRowSqInsert();
-                Navigator.of(context).pop();
-                // Navigator.push(
-                //     context,
-                //     MaterialPageRoute(
-                //       builder: (context) => MainPage(),
-                //     ));
+                await _SaveData("");
               },
             ),
             TextButton(

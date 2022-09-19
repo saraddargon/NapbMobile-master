@@ -2,9 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
-//import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:barcodeapp/content/expacking/PackingScanPD.dart';
-import 'package:barcodeapp/content/mainpage.dart';
 import 'package:barcodeapp/global.dart';
 import 'package:barcodeapp/model/sqlmanament.dart';
 import 'package:flutter/material.dart';
@@ -15,16 +13,16 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:barcodeapp/model/PackingModel.dart';
 
 // ignore: must_be_immutable
-class Packing extends StatefulWidget {
+class PackingShipping1 extends StatefulWidget {
   String tobj = "";
   //Packing({Key? key, required this.tobj}) : super(key: key);
-  Packing({Key? key}) : super(key: key);
+  PackingShipping1({Key? key}) : super(key: key);
 
   @override
-  SPackingState createState() => SPackingState();
+  PackingShipping1State createState() => PackingShipping1State();
 }
 
-class SPackingState extends State<Packing> {
+class PackingShipping1State extends State<PackingShipping1> {
   final ButtonStyle style = ElevatedButton.styleFrom(
     textStyle: const TextStyle(fontSize: 20),
     elevation: 5.0,
@@ -53,8 +51,7 @@ class SPackingState extends State<Packing> {
   bool lstricker = false;
   String checkby = "";
   final ButtonStyle flatButtonStyle = TextButton.styleFrom(
-    primary: Colors.black87,
-    minimumSize: Size(88, 36), //Size(88, 36),
+    foregroundColor: Colors.black87, minimumSize: Size(88, 36), //Size(88, 36),
     padding: EdgeInsets.symmetric(horizontal: 16.0),
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(2.0)),
@@ -105,10 +102,10 @@ class SPackingState extends State<Packing> {
   @override
   initState() {
     super.initState();
-    barcode = widget.tobj;
+    // barcode = widget.tobj;
     if (barcode != '') {
       //_clearData();
-      _fetchJobs(barcode);
+      // _fetchJobs(barcode);
     }
   }
 
@@ -116,7 +113,7 @@ class SPackingState extends State<Packing> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text('Export Packing '),
+        title: Text('Export Shipping '),
         backgroundColor: Colors.blueGrey,
         actions: <Widget>[
           IconButton(
@@ -166,8 +163,8 @@ class SPackingState extends State<Packing> {
                     color: Colors.orange,
                     size: 30.0,
                   ),
-                  hintText: 'Scan QR List?',
-                  labelText: 'Scan QR Code :',
+                  hintText: 'Scan Invoice/Export?',
+                  labelText: 'Scan Invoice/Export :',
                 ),
                 keyboardType: TextInputType.text,
                 onFieldSubmitted: (String value) {
@@ -175,49 +172,7 @@ class SPackingState extends State<Packing> {
                   getDataDisplay(value);
                 },
               ),
-              SizedBox(height: 20.00),
-              TextField(
-                controller: TextEditingController(text: aName),
-                maxLines: null,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                ),
-                decoration: InputDecoration(
-                  //fillColor: Colors.green.shade50,
-                  border: UnderlineInputBorder(),
-                  filled: true,
-                  enabled: true,
-                  icon: Icon(
-                    Icons.description,
-                    color: Color(0xff5ac18e),
-                    size: 30.0,
-                  ),
-                  labelText: 'Group (small) :',
-                ),
-              ),
-              SizedBox(height: 20.00),
-              TextField(
-                controller: TextEditingController(text: iQty.toString()),
-                maxLines: null,
-                readOnly: true,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 16,
-                ),
-                decoration: InputDecoration(
-                  //fillColor: Colors.green.shade50,
-                  border: UnderlineInputBorder(),
-                  filled: true,
-                  enabled: true,
-                  icon: Icon(
-                    Icons.description,
-                    color: Color(0xff5ac18e),
-                    size: 30.0,
-                  ),
-                  labelText: 'Quantity :',
-                ),
-              ),
+
               SizedBox(height: 50.00),
               TextButton(
                 style: TextButton.styleFrom(
@@ -226,7 +181,7 @@ class SPackingState extends State<Packing> {
                 onPressed: () {
                   //print("sompong1");
                   if (barcode != '') {
-                    dbs.groupM = aName;
+                    //  dbs.groupM = aName;
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -312,7 +267,7 @@ class SPackingState extends State<Packing> {
           // Do something
         });
 
-        await _fetchJobs(value);
+        //  await _fetchJobs(value);
 
         ///////end//////////
       } else {
