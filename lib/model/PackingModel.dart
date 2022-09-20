@@ -109,5 +109,36 @@ class JException {
   }
 }
 
+class ExShipingView {
+  final String pPallet;
+  final double pListNo;
+  final String pPartNo;
+  final int pQty;
+  final String pOfTAG;
+  final int pAC;
+  final int pid;
+
+  ExShipingView({
+    required this.pPallet,
+    required this.pListNo,
+    required this.pPartNo,
+    required this.pQty,
+    required this.pOfTAG,
+    required this.pAC,
+    required this.pid,
+  });
+  factory ExShipingView.fromJson(Map<String, dynamic> json) {
+    return ExShipingView(
+      pPallet: json['PalletNo'],
+      pListNo: json['ListNo'],
+      pPartNo: json['PartNo'],
+      pQty: json['Qty'],
+      pOfTAG: json['OfTAG'],
+      pAC: json['AC'],
+      pid: json['id'],
+    );
+  }
+}
+
 //////////////////////TEST DATA////////////////////
 

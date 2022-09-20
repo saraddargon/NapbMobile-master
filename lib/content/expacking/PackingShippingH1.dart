@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:barcodeapp/content/expacking/PackingScanPD.dart';
+import 'package:barcodeapp/content/expacking/packingShippingH2.dart';
 import 'package:barcodeapp/global.dart';
 import 'package:barcodeapp/model/sqlmanament.dart';
 import 'package:flutter/material.dart';
@@ -185,7 +186,9 @@ class PackingShipping1State extends State<PackingShipping1> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PackingScanPD(),
+                          builder: (context) => PackingShipping2(
+                            tobj: barcode,
+                          ),
                         ));
                   }
                 },

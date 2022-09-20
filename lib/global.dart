@@ -98,13 +98,13 @@ class DBData {
   }
 
   ///////////////////Url CheckNo
-  static String _url = "http://1.179.133.222:8090/api/";
-  //static String _url = "http://1.179.133.222:8090/";
+  //static String _url = "http://1.179.133.222:8090/api/";
+  static String _url = "http://192.168.1.5/webAppApi/api/";
   //"http://10.0.2.2:8090/";
   String get url => _url;
   //////////////////Url ...
-  static String _urlCheckNo = "http://1.179.133.222:8090/api/";
-  //static String _urlCheckNo = "http://1.179.133.222:8090/api/CheckNo/";
+  //static String _urlCheckNo = "http://1.179.133.222:8090/api/";
+  static String _urlCheckNo = "http://192.168.1.5/webAppApi/api/";
   //"http://10.0.2.2:8090/api/checkNo/";
   String get urlCheckNo => _urlCheckNo;
   //////////////////Url ...
